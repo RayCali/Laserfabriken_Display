@@ -22,7 +22,7 @@ struct_message myData;
 esp_now_peer_info_t peerInfo;
 
 // callback when data is sent
-void OnDataSent(const uint8_t *mac_addr, esp_now_send_status_t status) {
+void OnDataSent(const wifi_tx_info_t *mac_addr, esp_now_send_status_t status) {
   Serial.print("\r\nLast Packet Send Status:\t");
   Serial.println(status == ESP_NOW_SEND_SUCCESS ? "Delivery Success" : "Delivery Fail");
 }
@@ -43,8 +43,8 @@ lv_meter_indicator_t * needle3;
 static lv_obj_t * meter4;
 lv_meter_indicator_t * needle4; 
 
-#define EXAMPLE_ENCODER_ECA_PIN    8
-#define EXAMPLE_ENCODER_ECB_PIN    7
+#define EXAMPLE_ENCODER_ECA_PIN    2
+#define EXAMPLE_ENCODER_ECB_PIN    1
 
 #define SET_BIT(reg,bit) (reg |= ((uint32_t)0x01<<bit))
 #define CLEAR_BIT(reg,bit) (reg &= (~((uint32_t)0x01<<bit)))
@@ -275,8 +275,8 @@ void setup()
   };
   s_knob = iot_knob_create(&cfg);
 
-  iot_knob_register_cb(s_knob, KNOB_LEFT, _knob_left_cb, NULL);
-  iot_knob_register_cb(s_knob, KNOB_RIGHT, _knob_right_cb, NULL);
+  iot_knob_register_cb(s_knob, KNOB_LEFT, _knob_right_cb, NULL);
+  iot_knob_register_cb(s_knob, KNOB_RIGHT, _knob_left_cb, NULL);
   xTaskCreate(user_encoder_loop_task, "user_encoder_loop_task", 3000, NULL, 2, NULL);
   xTaskCreate(example_lvgl_port_task, "LVGL", EXAMPLE_LVGL_TASK_STACK_SIZE, NULL, EXAMPLE_LVGL_TASK_PRIORITY, NULL);
 
