@@ -5,7 +5,7 @@
 HardwareSerial SerialSTM(0);
 
 typedef struct struct_message {
-    float current_A;
+    float power_pct;
     float laser_setpoint_C;
     float crystal_setpoint_C;
     bool  laser_on;
@@ -26,7 +26,7 @@ static void send_cmd(const char *fmt, ...) {
 void OnDataRecv(const esp_now_recv_info_t *info, const uint8_t *incomingData, int len) {
     memcpy(&myData, incomingData, sizeof(myData));
 
-    send_cmd("set laser.current %.4f\r\n",    myData.current_A);
+    send_cmd("set laser.power %d\r\n",          (int)myData.power_pct);
     send_cmd("set laser.setpoint %.4f\r\n",   myData.laser_setpoint_C);
     send_cmd("set crystal.setpoint %.4f\r\n", myData.crystal_setpoint_C);
     send_cmd("%s\r\n", myData.laser_on ? "laser on" : "laser off");

@@ -11,7 +11,7 @@
 uint8_t broadcastAddress[] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
 
 typedef struct struct_message {
-    float current_A;
+    float power_pct;
     float laser_setpoint_C;
     float crystal_setpoint_C;
     bool  laser_on;
@@ -49,15 +49,15 @@ EventGroupHandle_t knob_even_ = NULL;
 static knob_handle_t s_knob = 0;
 SemaphoreHandle_t mutex;
 
-// value[0] = current (A, 0.00–1.50)
+// value[0] = power (%, 0–100)
 // value[1] = laser setpoint (°C, -55–150)
 // value[2] = crystal setpoint (°C, -55–150)
 float value[3] = {0.0f, 25.0f, 25.0f};
 bool  laser_on  = false;
 
-const float step[3]   = {0.01f, 1.0f,   1.0f};
+const float step[3]   = {1.0f,   1.0f,   1.0f};
 const float minVal[3] = {0.0f,  -55.0f, -55.0f};
-const float maxVal[3] = {1.5f,  150.0f, 150.0f};
+const float maxVal[3] = {100.0f, 150.0f, 150.0f};
 
 int chosen = 0;
 
@@ -75,27 +75,27 @@ void lv_example_meter_1(void)
     lv_obj_set_style_border_width(meter, 0, LV_PART_MAIN);
 
     lv_meter_scale_t * scale = lv_meter_add_scale(meter);
-    lv_meter_set_scale_range(meter, scale, 0, 150, 270, 135); // 0–150 = 0.00–1.50 A
-    lv_meter_set_scale_ticks(meter, scale, 16, 3, 10, lv_palette_main(LV_PALETTE_GREY));
+    lv_meter_set_scale_range(meter, scale, 0, 100, 270, 135); // 0–100%
+    lv_meter_set_scale_ticks(meter, scale, 11, 3, 10, lv_palette_main(LV_PALETTE_GREY));
     lv_meter_set_scale_major_ticks(meter, scale, 5, 5, 15, lv_color_white(), 10);
 
     lv_meter_indicator_t * indic;
     indic = lv_meter_add_arc(meter, scale, 3, lv_palette_main(LV_PALETTE_BLUE), 0);
     lv_meter_set_indicator_start_value(meter, indic, 0);
-    lv_meter_set_indicator_end_value(meter, indic, 15);
+    lv_meter_set_indicator_end_value(meter, indic, 10);
     indic = lv_meter_add_scale_lines(meter, scale, lv_palette_main(LV_PALETTE_BLUE), lv_palette_main(LV_PALETTE_BLUE), false, 0);
     lv_meter_set_indicator_start_value(meter, indic, 0);
-    lv_meter_set_indicator_end_value(meter, indic, 15);
+    lv_meter_set_indicator_end_value(meter, indic, 10);
     indic = lv_meter_add_arc(meter, scale, 3, lv_palette_main(LV_PALETTE_RED), 0);
-    lv_meter_set_indicator_start_value(meter, indic, 130);
-    lv_meter_set_indicator_end_value(meter, indic, 150);
+    lv_meter_set_indicator_start_value(meter, indic, 90);
+    lv_meter_set_indicator_end_value(meter, indic, 100);
     indic = lv_meter_add_scale_lines(meter, scale, lv_palette_main(LV_PALETTE_RED), lv_palette_main(LV_PALETTE_RED), false, 0);
-    lv_meter_set_indicator_start_value(meter, indic, 130);
-    lv_meter_set_indicator_end_value(meter, indic, 150);
+    lv_meter_set_indicator_start_value(meter, indic, 90);
+    lv_meter_set_indicator_end_value(meter, indic, 100);
 
     needle = lv_meter_add_needle_line(meter, scale, 4, lv_color_hex(0xFFFFFF), -10);
 
-    lv_arc_set_range(ui_Arc1, 0, 150);
+    lv_arc_set_range(ui_Arc1, 0, 100);
 }
 
 void lv_example_meter_2(void)
@@ -172,7 +172,7 @@ void lv_example_meter_3(void)
 
 static void send_espnow(void)
 {
-    myData.current_A        = value[0];
+    myData.power_pct          = value[0];
     myData.laser_setpoint_C  = value[1];
     myData.crystal_setpoint_C = value[2];
     myData.laser_on          = laser_on;
@@ -303,10 +303,10 @@ static void example_lvgl_port_task(void *arg)
         if (xSemaphoreTake(mutex, portMAX_DELAY)) {
             char buf[16];
 
-            snprintf(buf, sizeof(buf), "%.2f", value[0]);
+            snprintf(buf, sizeof(buf), "%d%%", (int)value[0]);
             lv_label_set_text(ui_power, buf);
-            lv_meter_set_indicator_value(meter, needle, (int)(value[0] * 100));
-            lv_arc_set_value(ui_Arc1, (int)(value[0] * 100));
+            lv_meter_set_indicator_value(meter, needle, (int)value[0]);
+            lv_arc_set_value(ui_Arc1, (int)value[0]);
 
             snprintf(buf, sizeof(buf), "%d", (int)value[1]);
             lv_label_set_text(ui_power1, buf);
