@@ -4,12 +4,7 @@
 // Hardware UART → STM32 (TX=GPIO21, RX=GPIO20)
 HardwareSerial SerialSTM(0);
 
-typedef struct struct_message {
-    float power_pct;
-    float laser_setpoint_C;
-    float crystal_setpoint_C;
-    bool  laser_on;
-} struct_message;
+#include "../laser_protocol.h"
 
 struct_message myData;
 
@@ -27,8 +22,8 @@ void OnDataRecv(const esp_now_recv_info_t *info, const uint8_t *incomingData, in
     memcpy(&myData, incomingData, sizeof(myData));
 
     send_cmd("set laser.power %d\r\n",          (int)myData.power_pct);
-    send_cmd("set laser.setpoint %.4f\r\n",   myData.laser_setpoint_C);
-    send_cmd("set crystal.setpoint %.4f\r\n", myData.crystal_setpoint_C);
+    send_cmd("set crystal.wavelength %.2f\r\n", myData.laser_wavelength_nm);
+    send_cmd("set crystal.wavelength %.2f\r\n", myData.crystal_wavelength_nm);
     send_cmd("%s\r\n", myData.laser_on ? "laser on" : "laser off");
 }
 

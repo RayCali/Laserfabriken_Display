@@ -118,7 +118,7 @@ void ui_Screen1_screen_init(void)
     lv_obj_set_x(ui_Label3, 43);
     lv_obj_set_y(ui_Label3, -57);
     lv_obj_set_align(ui_Label3, LV_ALIGN_CENTER);
-    lv_label_set_text(ui_Label3, "XTAL T");
+    lv_label_set_text(ui_Label3, "WL");
     lv_obj_set_style_text_color(ui_Label3, lv_color_hex(0x808080), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_text_opa(ui_Label3, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_text_font(ui_Label3, &lv_font_montserrat_12, LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -129,7 +129,7 @@ void ui_Screen1_screen_init(void)
     lv_obj_set_x(ui_Label1, 94);
     lv_obj_set_y(ui_Label1, 76);
     lv_obj_set_align(ui_Label1, LV_ALIGN_CENTER);
-    lv_label_set_text(ui_Label1, "LASER T");
+    lv_label_set_text(ui_Label1, "WL");
     lv_obj_set_style_text_color(ui_Label1, lv_color_hex(0x808080), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_text_opa(ui_Label1, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_text_font(ui_Label1, &lv_font_montserrat_12, LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -273,7 +273,7 @@ void ui_Screen1_screen_init(void)
     lv_obj_set_x(ui_LabelXtalUnit, 43);
     lv_obj_set_y(ui_LabelXtalUnit, -90);
     lv_obj_set_align(ui_LabelXtalUnit, LV_ALIGN_CENTER);
-    lv_label_set_text(ui_LabelXtalUnit, "°C");
+    lv_label_set_text(ui_LabelXtalUnit, "nm");
     lv_obj_set_style_text_color(ui_LabelXtalUnit, lv_color_hex(0x808080), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_text_opa(ui_LabelXtalUnit, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
 
@@ -283,7 +283,7 @@ void ui_Screen1_screen_init(void)
     lv_obj_set_x(ui_Label12, 94);
     lv_obj_set_y(ui_Label12, 43);
     lv_obj_set_align(ui_Label12, LV_ALIGN_CENTER);
-    lv_label_set_text(ui_Label12, "°C");
+    lv_label_set_text(ui_Label12, "nm");
     lv_obj_set_style_text_color(ui_Label12, lv_color_hex(0x808080), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_text_opa(ui_Label12, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
 
