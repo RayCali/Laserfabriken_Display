@@ -27,9 +27,6 @@ lv_meter_indicator_t * needle;
 static lv_obj_t * meter2;
 lv_meter_indicator_t * needle2;
 
-static lv_obj_t * meter3;
-lv_meter_indicator_t * needle3;
-
 static lv_obj_t * ui_laserBtn = NULL;
 
 #define EXAMPLE_ENCODER_ECA_PIN    2
@@ -46,23 +43,26 @@ SemaphoreHandle_t mutex;
 
 // value[0] = power (%, 0–100)
 // value[1] = laser wavelength (nm, 1540.00–1560.00)
-// value[2] = crystal wavelength (nm, 1540.00–1560.00)
-float value[3] = {0.0f, 1550.0f, 1550.0f};
+float value[2] = {0.0f, 1550.0f};
 bool  laser_on  = false;
 
-float       step[3]   = {1.0f,   0.1f,   0.1f};
-const float minVal[3] = {0.0f,  1540.0f, 1540.0f};
-const float maxVal[3] = {100.0f, 1560.0f, 1560.0f};
+float       step[2]   = {1.0f,   1.0f};
+const float minVal[2] = {0.0f,  1540.0f};
+const float maxVal[2] = {100.0f, 1560.0f};
 
-static int         wl_step_idx = 2; // 0=10, 1=1, 2=0.1, 3=0.01
-static const float wl_steps[]  = {10.0f, 1.0f, 0.1f, 0.01f};
-static lv_obj_t  * ui_wlStepLabel = NULL;
-
-static int         lw_step_idx = 1; // 0=1, 1=0.1, 2=0.01
+static int         lw_step_idx = 0; // 0=1, 1=0.1, 2=0.01
 static const float lw_steps[]  = {1.0f, 0.1f, 0.01f};
 static lv_obj_t  * ui_lwStepLabel = NULL;
 
 int chosen = 0;
+
+#define DIM_TIMEOUT_MS  5000
+#define BRIGHT_DUTY     40
+#define DIM_DUTY        0
+
+static volatile uint32_t last_activity_ms = 0;
+static bool              screen_dimmed    = false;
+static lv_obj_t         *dim_overlay      = NULL;
 
 // ── Meter init ────────────────────────────────────────────────────────────────
 
@@ -125,27 +125,7 @@ void lv_example_meter_2(void)
     lv_arc_set_range(ui_Arc2, 15400, 15600);
 }
 
-void lv_example_meter_3(void)
-{
-    extern lv_obj_t *ui_Screen1;
-    meter3 = lv_meter_create(ui_Screen1);
-    lv_obj_add_event_cb(meter3, meter3_event_cb, LV_EVENT_ALL, NULL);
-    lv_obj_center(meter3);
-    lv_obj_set_size(meter3, 128, 128);
-    lv_obj_set_pos(meter3, 43, -107);
-    lv_obj_set_style_bg_opa(meter3, LV_OPA_TRANSP, LV_PART_MAIN);
-    lv_obj_set_style_border_width(meter3, 0, LV_PART_MAIN);
-
-    lv_meter_scale_t * scale = lv_meter_add_scale(meter3);
-    lv_meter_set_scale_range(meter3, scale, 1540, 1560, 270, 135);
-    lv_meter_set_scale_ticks(meter3, scale, 21, 1, 4, lv_palette_main(LV_PALETTE_GREY));
-    lv_meter_set_scale_major_ticks(meter3, scale, 5, 2, 8, lv_color_white(), 10);
-    lv_obj_set_style_text_font(meter3, &lv_font_montserrat_10, LV_PART_TICKS | LV_STATE_DEFAULT);
-
-    needle3 = lv_meter_add_needle_line(meter3, scale, 3, lv_color_hex(0xFFFFFF), -10);
-
-    lv_arc_set_range(ui_Arc3, 1540, 1560);
-}
+void lv_example_meter_3(void) {}  // removed
 
 static void meter2_label_cb(lv_event_t *e)
 {
@@ -168,25 +148,10 @@ void lv_create_laser_wl_step_ui(void)
     lv_obj_set_x(ui_lwStepLabel, 94);
     lv_obj_set_y(ui_lwStepLabel, 92);
     lv_obj_set_align(ui_lwStepLabel, LV_ALIGN_CENTER);
-    lv_label_set_text(ui_lwStepLabel, "step:0.10");
+    lv_label_set_text(ui_lwStepLabel, "step:1.00");
     lv_obj_set_style_text_color(ui_lwStepLabel, lv_color_hex(0x808080), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_text_opa(ui_lwStepLabel, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_text_font(ui_lwStepLabel, &lv_font_montserrat_12, LV_PART_MAIN | LV_STATE_DEFAULT);
-}
-
-void lv_create_wavelength_step_ui(void)
-{
-    extern lv_obj_t *ui_Screen1;
-    ui_wlStepLabel = lv_label_create(ui_Screen1);
-    lv_obj_set_width(ui_wlStepLabel, LV_SIZE_CONTENT);
-    lv_obj_set_height(ui_wlStepLabel, LV_SIZE_CONTENT);
-    lv_obj_set_x(ui_wlStepLabel, 43);
-    lv_obj_set_y(ui_wlStepLabel, -44);
-    lv_obj_set_align(ui_wlStepLabel, LV_ALIGN_CENTER);
-    lv_label_set_text(ui_wlStepLabel, "step:0.10");
-    lv_obj_set_style_text_color(ui_wlStepLabel, lv_color_hex(0x808080), LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_text_opa(ui_wlStepLabel, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_text_font(ui_wlStepLabel, &lv_font_montserrat_12, LV_PART_MAIN | LV_STATE_DEFAULT);
 }
 
 // ── Laser on/off button ───────────────────────────────────────────────────────
@@ -194,8 +159,7 @@ void lv_create_wavelength_step_ui(void)
 static void send_espnow(void)
 {
     myData.power_pct          = (uint8_t)value[0];
-    myData.laser_wavelength_nm    = value[1];
-    myData.crystal_wavelength_nm = value[2];
+    myData.crystal_wavelength_nm = value[1];
     myData.laser_on          = laser_on;
     esp_now_send(broadcastAddress, (uint8_t *)&myData, sizeof(myData));
 }
@@ -205,6 +169,7 @@ void laser_btn_event_cb(lv_event_t * e)
     if (lv_event_get_code(e) == LV_EVENT_CLICKED) {
         if (xSemaphoreTake(mutex, portMAX_DELAY)) {
             laser_on = !laser_on;
+            if (laser_on) last_activity_ms = millis();
             lv_obj_t * lbl = lv_obj_get_child(ui_laserBtn, 0);
             if (laser_on) {
                 lv_label_set_text(lbl, "ON");
@@ -236,6 +201,22 @@ void lv_create_laser_button(void)
     lv_obj_center(lbl);
 }
 
+// ── Screen dim control ────────────────────────────────────────────────────────
+
+static void overlay_click_cb(lv_event_t *e)
+{
+    last_activity_ms = millis();
+    screen_dimmed = false;
+    setUpdutySubdivide(BRIGHT_DUTY);
+    lv_obj_del(dim_overlay);
+    dim_overlay = NULL;
+}
+
+static void screen_activity_cb(lv_event_t *e)
+{
+    last_activity_ms = millis();
+}
+
 // ── Knob callbacks ────────────────────────────────────────────────────────────
 
 static void _knob_left_cb(void *arg, void *data)
@@ -261,13 +242,17 @@ void setup()
     lcd_lvgl_Init();
     lv_example_meter_1();
     lv_example_meter_2();
-    lv_example_meter_3();
     lv_create_laser_wl_step_ui();
-    lv_create_wavelength_step_ui();
     lv_create_laser_button();
 
     set_active_meter(chosen);
-    lcd_bl_pwm_bsp_init(40);
+    lcd_bl_pwm_bsp_init(BRIGHT_DUTY);
+
+    {
+        extern lv_obj_t *ui_Screen1;
+        lv_obj_add_event_cb(ui_Screen1, screen_activity_cb, LV_EVENT_PRESSED, NULL);
+    }
+    last_activity_ms = millis();
 
     knob_even_ = xEventGroupCreate();
     knob_config_t cfg = {
@@ -304,6 +289,7 @@ static void user_encoder_loop_task(void *arg)
                 send_espnow();
                 xSemaphoreGive(mutex);
             }
+            last_activity_ms = millis();
         }
         if (READ_BIT(even, 1)) {
             if (xSemaphoreTake(mutex, portMAX_DELAY)) {
@@ -312,6 +298,7 @@ static void user_encoder_loop_task(void *arg)
                 send_espnow();
                 xSemaphoreGive(mutex);
             }
+            last_activity_ms = millis();
         }
     }
 }
@@ -320,13 +307,15 @@ static void user_encoder_loop_task(void *arg)
 
 static void example_lvgl_port_task(void *arg)
 {
-    float prev[3] = {-1.0f, -1.0f, -1.0f};
+    float prev[2] = {-1.0f, -1.0f};
+    bool  lo      = false;
 
     for (;;) {
         lv_timer_handler();
 
         if (xSemaphoreTake(mutex, portMAX_DELAY)) {
             char buf[16];
+            lo = laser_on;
 
             if (value[0] != prev[0]) {
                 prev[0] = value[0];
@@ -344,16 +333,27 @@ static void example_lvgl_port_task(void *arg)
                 lv_arc_set_value(ui_Arc2, (int)(value[1] * 10.0f));
             }
 
-            if (value[2] != prev[2]) {
-                prev[2] = value[2];
-                snprintf(buf, sizeof(buf), "%.2f", value[2]);
-                lv_label_set_text(ui_power3, buf);
-                lv_meter_set_indicator_value(meter3, needle3, (int)value[2]);
-                lv_arc_set_value(ui_Arc3, (int)value[2]);
-            }
-
             xSemaphoreGive(mutex);
         }
+
+        uint32_t now = millis();
+        if (lo && !screen_dimmed && (now - last_activity_ms >= DIM_TIMEOUT_MS)) {
+            screen_dimmed = true;
+            setUpdutySubdivide(DIM_DUTY);
+            extern lv_obj_t *ui_Screen1;
+            dim_overlay = lv_obj_create(ui_Screen1);
+            lv_obj_set_size(dim_overlay, LV_HOR_RES, LV_VER_RES);
+            lv_obj_center(dim_overlay);
+            lv_obj_clear_flag(dim_overlay, LV_OBJ_FLAG_SCROLLABLE);
+            lv_obj_set_style_bg_opa(dim_overlay, LV_OPA_TRANSP, 0);
+            lv_obj_set_style_border_width(dim_overlay, 0, 0);
+            lv_obj_add_event_cb(dim_overlay, overlay_click_cb, LV_EVENT_CLICKED, NULL);
+        } else if (!lo && screen_dimmed) {
+            screen_dimmed = false;
+            setUpdutySubdivide(BRIGHT_DUTY);
+            if (dim_overlay) { lv_obj_del(dim_overlay); dim_overlay = NULL; }
+        }
+
         vTaskDelay(pdMS_TO_TICKS(1));
     }
 }
@@ -382,30 +382,10 @@ void meter2_event_cb(lv_event_t * e)
         }
     }
 }
-void meter3_event_cb(lv_event_t * e)
-{
-    if (lv_event_get_code(e) == LV_EVENT_CLICKED) {
-        if (chosen == 2) {
-            if (xSemaphoreTake(mutex, portMAX_DELAY)) {
-                wl_step_idx = (wl_step_idx + 1) % 4;
-                step[2] = wl_steps[wl_step_idx];
-                xSemaphoreGive(mutex);
-            }
-            char buf[16];
-            snprintf(buf, sizeof(buf), "step:%.2f", wl_steps[wl_step_idx]);
-            lv_label_set_text(ui_wlStepLabel, buf);
-        } else {
-            chosen = 2;
-            set_active_meter(chosen);
-        }
-    }
-}
-
 void set_active_meter(int index)
 {
     lv_obj_set_style_border_width(meter,  0, LV_PART_MAIN);
     lv_obj_set_style_border_width(meter2, 0, LV_PART_MAIN);
-    lv_obj_set_style_border_width(meter3, 0, LV_PART_MAIN);
     switch (index) {
         case 0:
             lv_obj_set_style_border_width(meter, 2, LV_PART_MAIN);
@@ -414,10 +394,6 @@ void set_active_meter(int index)
         case 1:
             lv_obj_set_style_border_width(meter2, 2, LV_PART_MAIN);
             lv_obj_set_style_border_color(meter2, lv_color_hex(0x574509), LV_PART_MAIN);
-            break;
-        case 2:
-            lv_obj_set_style_border_width(meter3, 2, LV_PART_MAIN);
-            lv_obj_set_style_border_color(meter3, lv_color_hex(0x574509), LV_PART_MAIN);
             break;
     }
 }

@@ -22,7 +22,6 @@ void OnDataRecv(const esp_now_recv_info_t *info, const uint8_t *incomingData, in
     memcpy(&myData, incomingData, sizeof(myData));
 
     send_cmd("set laser.power %d\r\n",          (int)myData.power_pct);
-    send_cmd("set crystal.wavelength %.2f\r\n", myData.laser_wavelength_nm);
     send_cmd("set crystal.wavelength %.2f\r\n", myData.crystal_wavelength_nm);
     send_cmd("%s\r\n", myData.laser_on ? "laser on" : "laser off");
 }

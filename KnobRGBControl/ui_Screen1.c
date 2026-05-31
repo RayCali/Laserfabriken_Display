@@ -61,25 +61,6 @@ void ui_Screen1_screen_init(void)
     lv_obj_set_style_bg_color(ui_Arc2, lv_color_hex(0xFFFFFF), LV_PART_KNOB | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_opa(ui_Arc2, 0, LV_PART_KNOB | LV_STATE_DEFAULT);
 
-    ui_Arc3 = lv_arc_create(ui_Screen1);
-    lv_obj_set_width(ui_Arc3, 110);
-    lv_obj_set_height(ui_Arc3, 110);
-    lv_obj_set_x(ui_Arc3, 43);
-    lv_obj_set_y(ui_Arc3, -107);
-    lv_obj_set_align(ui_Arc3, LV_ALIGN_CENTER);
-    lv_obj_clear_flag(ui_Arc3, LV_OBJ_FLAG_CLICKABLE);      /// Flags
-    lv_obj_set_style_arc_width(ui_Arc3, 2, LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_arc_rounded(ui_Arc3, false, LV_PART_MAIN | LV_STATE_DEFAULT);
-
-    lv_obj_set_style_arc_color(ui_Arc3, lv_color_hex(0xFF407F), LV_PART_INDICATOR | LV_STATE_DEFAULT);
-    lv_obj_set_style_arc_opa(ui_Arc3, 255, LV_PART_INDICATOR | LV_STATE_DEFAULT);
-    lv_obj_set_style_arc_width(ui_Arc3, 2, LV_PART_INDICATOR | LV_STATE_DEFAULT);
-    lv_obj_set_style_arc_rounded(ui_Arc3, false, LV_PART_INDICATOR | LV_STATE_DEFAULT);
-
-    lv_obj_set_style_radius(ui_Arc3, 0, LV_PART_KNOB | LV_STATE_DEFAULT);
-    lv_obj_set_style_bg_color(ui_Arc3, lv_color_hex(0xFFFFFF), LV_PART_KNOB | LV_STATE_DEFAULT);
-    lv_obj_set_style_bg_opa(ui_Arc3, 0, LV_PART_KNOB | LV_STATE_DEFAULT);
-
     ui_power1 = lv_label_create(ui_Screen1);
     lv_obj_set_width(ui_power1, LV_SIZE_CONTENT);   /// 1
     lv_obj_set_height(ui_power1, LV_SIZE_CONTENT);    /// 1
@@ -91,17 +72,6 @@ void ui_Screen1_screen_init(void)
     lv_obj_set_style_text_opa(ui_power1, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_text_font(ui_power1, &lv_font_montserrat_16, LV_PART_MAIN | LV_STATE_DEFAULT);
 
-    ui_power3 = lv_label_create(ui_Screen1);
-    lv_obj_set_width(ui_power3, LV_SIZE_CONTENT);   /// 1
-    lv_obj_set_height(ui_power3, LV_SIZE_CONTENT);    /// 1
-    lv_obj_set_x(ui_power3, 43);
-    lv_obj_set_y(ui_power3, -74);
-    lv_obj_set_align(ui_power3, LV_ALIGN_CENTER);
-    lv_label_set_text(ui_power3, "72");
-    lv_obj_set_style_text_color(ui_power3, lv_color_hex(0xD8D5D5), LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_text_opa(ui_power3, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_text_font(ui_power3, &lv_font_montserrat_16, LV_PART_MAIN | LV_STATE_DEFAULT);
-
     ui_Label2 = lv_label_create(ui_Screen1);
     lv_obj_set_width(ui_Label2, LV_SIZE_CONTENT);   /// 1
     lv_obj_set_height(ui_Label2, LV_SIZE_CONTENT);    /// 1
@@ -111,17 +81,6 @@ void ui_Screen1_screen_init(void)
     lv_label_set_text(ui_Label2, "POWER");
     lv_obj_set_style_text_color(ui_Label2, lv_color_hex(0x808080), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_text_opa(ui_Label2, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
-
-    ui_Label3 = lv_label_create(ui_Screen1);
-    lv_obj_set_width(ui_Label3, LV_SIZE_CONTENT);   /// 1
-    lv_obj_set_height(ui_Label3, LV_SIZE_CONTENT);    /// 1
-    lv_obj_set_x(ui_Label3, 43);
-    lv_obj_set_y(ui_Label3, -57);
-    lv_obj_set_align(ui_Label3, LV_ALIGN_CENTER);
-    lv_label_set_text(ui_Label3, "WL");
-    lv_obj_set_style_text_color(ui_Label3, lv_color_hex(0x808080), LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_text_opa(ui_Label3, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_text_font(ui_Label3, &lv_font_montserrat_12, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     ui_Label1 = lv_label_create(ui_Screen1);
     lv_obj_set_width(ui_Label1, LV_SIZE_CONTENT);   /// 1
@@ -266,16 +225,6 @@ void ui_Screen1_screen_init(void)
     lv_obj_set_style_bg_color(ui_Panel10, lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_bg_opa(ui_Panel10, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_border_width(ui_Panel10, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
-
-    lv_obj_t *ui_LabelXtalUnit = lv_label_create(ui_Screen1);
-    lv_obj_set_width(ui_LabelXtalUnit, LV_SIZE_CONTENT);
-    lv_obj_set_height(ui_LabelXtalUnit, LV_SIZE_CONTENT);
-    lv_obj_set_x(ui_LabelXtalUnit, 43);
-    lv_obj_set_y(ui_LabelXtalUnit, -90);
-    lv_obj_set_align(ui_LabelXtalUnit, LV_ALIGN_CENTER);
-    lv_label_set_text(ui_LabelXtalUnit, "nm");
-    lv_obj_set_style_text_color(ui_LabelXtalUnit, lv_color_hex(0x808080), LV_PART_MAIN | LV_STATE_DEFAULT);
-    lv_obj_set_style_text_opa(ui_LabelXtalUnit, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     ui_Label12 = lv_label_create(ui_Screen1);
     lv_obj_set_width(ui_Label12, LV_SIZE_CONTENT);   /// 1
